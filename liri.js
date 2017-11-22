@@ -27,6 +27,38 @@ function displayTweets() {
   });
 }
 
+function omdbSearch() {
+  if (!searchString) {
+    searchString = "mr+nobody";
+  }
+  var queryUrl =
+    "http://www.omdbapi.com/?t=" + searchString + "&plot=short&apikey=40e9cece";
+
+  request(queryUrl, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      if (!JSON.parse(body).Error) {
+        // console.log(JSON.parse(body));
+        console.log(JSON.parse(body).Title);
+        console.log("Released in " + JSON.parse(body).Year);
+        console.log("IMDB Rating of " + JSON.parse(body).imdbRating);
+        console.log(
+          "Rotten Tomatoes Rating of " + JSON.parse(body).Ratings[1].Value
+        );
+        console.log("Produced in " + JSON.parse(body).Country);
+        console.log(
+          "Languages spoken in the movie are " + JSON.parse(body).Language
+        );
+        console.log("Plot? Here you go: " + JSON.parse(body).Plot);
+        console.log(
+          "The leading actors/actresses are " + JSON.parse(body).Actors
+        );
+        return;
+      }
+      console.log("Movie Not Found!");
+    }
+  });
+}
+
 var operation = process.argv[2];
 var searchString = "";
 
@@ -35,9 +67,9 @@ if (
   (operation == "spotify-this-song" || operation == "movie-this")
 ) {
   for (i = 3; i < process.argv.length; i++) {
-    searchString += process.argv[i] + " ";
+    searchString += "+" + process.argv[i];
   }
-  searchString.trim();
+  searchString = searchString.substr(1);
 }
 
 switch (operation) {
@@ -48,7 +80,7 @@ switch (operation) {
     // spotifySearch();
     break;
   case "movie-this":
-    // omdbSearch();
+    omdbSearch();
     break;
   case "do-what-it-says":
     // nobodyLikesTheBackstreetBoys();
